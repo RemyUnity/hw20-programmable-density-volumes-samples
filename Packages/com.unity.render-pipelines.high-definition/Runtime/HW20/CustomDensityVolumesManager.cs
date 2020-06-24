@@ -24,6 +24,7 @@ namespace UnityEngine.Rendering.HighDefinition
             var kernel = testingCS.FindKernel("CSMain");
 
             cmd.SetComputeTextureParam(testingCS, kernel, HDShaderIDs._VBufferDensity, HDRenderPipeline.currentPipeline.m_DensityBuffer);
+            ConstantBuffer.Push(cmd, parameters.volumetricCB, testingCS, HDShaderIDs._ShaderVariablesVolumetric);
 
             cmd.DispatchCompute(testingCS, kernel, ((int)parameters.resolution.x + 7) / 8, ((int)parameters.resolution.y + 7) / 8, parameters.viewCount);
         }

@@ -65,6 +65,7 @@ void CSMain(
 
     JitteredRay ray;
     ray.originWS = GetCurrentViewPosition();
+    ray.originWS = _WorldSpaceCameraPos;
     ray.centerDirWS = rayDirWS * rcpLenRayDir; // Normalize
 
     float FdotD = dot(F, ray.centerDirWS);
@@ -120,8 +121,6 @@ void CSMain(
     float t0 = DecodeLogarithmicDepthGeneralized(0, _VBufferDistanceDecodingParams);
     float de = _VBufferRcpSliceCount; // Log-encoded distance between slices
 
-    float3 testPos = GetCurrentViewPosition(); // <= Can't figure out whY it's not the world space camera position. Seems to be 0,0,0 at all time ?
-
     for (uint slice = 0; slice < _VBufferSliceCount; slice++)
     {
         uint3 voxelCoord = uint3(posInput.positionSS, slice + _VBufferSliceCount * unity_StereoEyeIndex);
@@ -131,9 +130,11 @@ void CSMain(
         float dt = t1 - t0;
         float t = t0 + 0.5 * dt;
 
-        float3 voxelCenterWS = ray.originWS + t * ray.centerDirWS; // We need to make this work !
+        float3 voxelCenterWS = ray.originWS + t * ray.centerDirWS;
 
-        // _VBufferDensity[voxelCoord] = float4(testPos.xy, 0, _VBufferDensity[voxelCoord].w);
-        _VBufferDensity[voxelCoord] = float4(1, 1, 1, 1.0 - saturate( 0.9 * abs(posInput.positionSS.y / 32.0 - 2 - sin(posInput.positionSS.x / 8.0))) );
+        float test = 1.0 - saturate(length(voxelCenterWS) / 5.0);
+
+        //_VBufferDensity[voxelCoord] = float4( saturate((voxelCenterWS)/5.0)*test, _VBufferDensity[voxelCoord].a);
+        _VBufferDensity[voxelCoord] = float4(1,1,1, step(length(voxelCenterWS), 5.0) );
     }
 }
