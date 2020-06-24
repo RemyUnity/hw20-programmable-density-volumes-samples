@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UnityEngine.Rendering.HighDefinition
 {
-    class CustomDensityVolumes : MonoBehaviour
+    class CustomDensityVolume : MonoBehaviour
     {
         public Vector3 size = Vector3.one;
         [HideInInspector]
@@ -28,5 +28,13 @@ namespace UnityEngine.Rendering.HighDefinition
                 return _aabb;
             } }
         private Bounds _aabb = new Bounds();
+
+        public ComputeShader compute;
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.matrix = transform.localToWorldMatrix;
+            Gizmos.DrawWireCube(Vector3.zero, size);
+        }
     }
 }
