@@ -1,0 +1,3 @@
+[submodule "LocalPackages/Graphics"]
+	path = LocalPackages/Graphics
+	url = https://github.com/Unity-Technologies/Graphics.git
