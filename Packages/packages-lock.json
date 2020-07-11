@@ -38,30 +38,30 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
-      "version": "file:com.unity.render-pipelines.core",
+      "version": "file:../LocalPackages/Graphics/com.unity.render-pipelines.core",
       "depth": 0,
-      "source": "embedded",
+      "source": "local",
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       }
     },
     "com.unity.render-pipelines.high-definition": {
-      "version": "file:com.unity.render-pipelines.high-definition",
+      "version": "file:../LocalPackages/Graphics/com.unity.render-pipelines.high-definition",
       "depth": 0,
-      "source": "embedded",
+      "source": "local",
       "dependencies": {
-        "com.unity.render-pipelines.core": "10.0.0-preview.1",
+        "com.unity.render-pipelines.core": "10.0.0-preview.4",
         "com.unity.shadergraph": "10.0.0-preview.1",
         "com.unity.visualeffectgraph": "10.0.0-preview.1",
         "com.unity.render-pipelines.high-definition-config": "10.0.0-preview.1"
       }
     },
     "com.unity.render-pipelines.high-definition-config": {
-      "version": "file:com.unity.render-pipelines.high-definition-config",
+      "version": "file:../LocalPackages/Graphics/com.unity.render-pipelines.high-definition-config",
       "depth": 0,
-      "source": "embedded",
+      "source": "local",
       "dependencies": {
-        "com.unity.render-pipelines.core": "10.0.0-preview.1"
+        "com.unity.render-pipelines.core": "10.0.0-preview.4"
       }
     },
     "com.unity.searcher": {
@@ -72,11 +72,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.shadergraph": {
-      "version": "file:com.unity.shadergraph",
+      "version": "file:../LocalPackages/Graphics/com.unity.shadergraph",
       "depth": 0,
-      "source": "embedded",
+      "source": "local",
       "dependencies": {
-        "com.unity.render-pipelines.core": "10.0.0-preview.1",
+        "com.unity.render-pipelines.core": "10.0.0-preview.4",
         "com.unity.searcher": "4.3.1"
       }
     },
@@ -117,9 +117,9 @@
       }
     },
     "com.unity.visualeffectgraph": {
-      "version": "file:com.unity.visualeffectgraph",
+      "version": "file:../LocalPackages/Graphics/com.unity.visualeffectgraph",
       "depth": 0,
-      "source": "embedded",
+      "source": "local",
       "dependencies": {
         "com.unity.shadergraph": "10.0.0-preview.1"
       }

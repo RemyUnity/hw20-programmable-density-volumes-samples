@@ -38,6 +38,11 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
+    "com.unity.modules.xr": "1.0.0",
+	"com.unity.render-pipelines.high-definition": "file:../LocalPackages/Graphics/com.unity.render-pipelines.high-definition",
+	"com.unity.render-pipelines.high-definition-config": "file:../LocalPackages/Graphics/com.unity.render-pipelines.high-definition-config",
+	"com.unity.render-pipelines.core": "file:../LocalPackages/Graphics/com.unity.render-pipelines.core",
+	"com.unity.shadergraph": "file:../LocalPackages/Graphics/com.unity.shadergraph",
+	"com.unity.visualeffectgraph": "file:../LocalPackages/Graphics/com.unity.visualeffectgraph"
   }
 }
