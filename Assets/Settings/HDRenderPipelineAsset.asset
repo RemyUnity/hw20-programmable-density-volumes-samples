@@ -151,7 +151,7 @@ MonoBehaviour:
   m_RenderPipelineResources: {fileID: 11400000, guid: 3ce144cff5783da45aa5d4fdc2da14b7, type: 2}
   m_RenderPipelineRayTracingResources: {fileID: 0}
   m_DefaultVolumeProfile: {fileID: 11400000, guid: 582adbd84082fdb4faf7cd4beb1ccd14, type: 2}
-  m_DefaultLookDevProfile: {fileID: 0}
+  m_DefaultLookDevProfile: {fileID: 11400000, guid: 254c4fe87beb7be4fa72e1681edbed02, type: 2}
   m_RenderingPathDefaultCameraFrameSettings:
     bitDatas:
       data1: 140666621394781
@@ -182,7 +182,7 @@ MonoBehaviour:
     materialQuality: 0
   m_RenderingPathDefaultRealtimeReflectionFrameSettings:
     bitDatas:
-      data1: 139991494955789
+      data1: 139992300262157
       data2: 4539628424389459968
     lodBias: 1
     lodBiasMode: 0
@@ -245,7 +245,6 @@ MonoBehaviour:
       reflectionProbeCacheSize: 64
       reflectionCubemapSize: 256
       reflectionCacheCompressed: 0
-      planarReflectionCacheCompressed: 0
       skyReflectionSize: 256
       skyLightingOverrideLayerMask:
         serializedVersion: 2
@@ -386,6 +385,26 @@ MonoBehaviour:
       - 0.33
       - 0.33
       - 0.5
+      RTRMinSmoothness:
+      - 0.6
+      - 0.4
+      - 0
+      RTRSmoothnessFadeStart:
+      - 0.7
+      - 0.5
+      - 0
+      RTRRayLength:
+      - 50
+      - 50
+      - 50
+      RTRClampValue:
+      - 0.8
+      - 1
+      - 1.2
+      RTRUpScaleRadius: 040000000400000003000000
+      RTRFullResolution: 000001
+      RTRDenoise: 010101
+      RTRDenoiserRadius: 080000000c00000010000000
   allowShaderVariantStripping: 1
   enableSRPBatcher: 1
   shaderVariantLogLevel: 0

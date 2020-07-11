@@ -1,0 +1,91 @@
+#pragma kernel CSMain
+
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBase.hlsl"
+
+#define Sphere_Radius 10.0
+#define In_Sphere_Radius 3.0
+#define Scan_Color float3(0.0, 0.5, 1.0)
+#define Grid_Color float3(1.0, 0.0, 0.0)
+
+float4 DensityInfo(float3 voxelCenterWS)
+{
+	// transform world to "object" space coordinate
+	float3 voxelCenterVolSpace = mul(InvVolumeMatrix, float4(voxelCenterWS, 1)).xyz;
+
+	float4x4 worldToObjectUnscaled = InvVolumeMatrix;
+	worldToObjectUnscaled._m03 /= length(InvVolumeMatrix._m00_m01_m02);
+	worldToObjectUnscaled._m13 /= length(InvVolumeMatrix._m10_m11_m12);
+	worldToObjectUnscaled._m23 /= length(InvVolumeMatrix._m20_m21_m22);
+	worldToObjectUnscaled._m00_m01_m02 = normalize(InvVolumeMatrix._m00_m01_m02);
+	worldToObjectUnscaled._m10_m11_m12 = -normalize(InvVolumeMatrix._m10_m11_m12);
+	worldToObjectUnscaled._m20_m21_m22 = -normalize(InvVolumeMatrix._m20_m21_m22);
+
+	float3 volumePos = mul(VolumeMatrix, float4(0, 0, 0, 1)).xyz;
+	float3 volumePosUnscaled = mul(worldToObjectUnscaled, float4(voxelCenterWS, 1.0) ).xyz;
+
+	float rotAngle = _Time * 15;
+	float cT = cos(rotAngle);
+	float sT = sin(rotAngle);
+
+	float2x2 rotMatrix = float2x2(cT, -sT, sT, cT);
+
+	float3 p = voxelCenterWS - volumePos;
+	float3 unrotatedP = p;
+	p.xz = mul(rotMatrix, p.xz);
+	float r = length(p);
+	float angle = atan2(-p.x, -p.z);
+	float angleProp = 0.5 + 0.5 * angle / 3.1415659;
+
+	float l = abs(p.x);
+	l = smoothstep(1.0, 0.5, l);
+	l = min(l, saturate((r- In_Sphere_Radius) / 10.0));
+	l = min(l, saturate((p.z) / 10.0));
+
+	float trail = smoothstep( 0.8, 1.0, angleProp ) * 0.5;
+	trail = min(trail, saturate((r - In_Sphere_Radius) / 10.0));
+
+	float concentric = length(p.xz);
+	concentric = concentric / 2.5 - 0.5;
+	concentric = abs(frac(concentric) * 2 - 1);
+	concentric = smoothstep(0.8, 0.9, concentric);
+	concentric = min(concentric, smoothstep(0.4, 0.3,  p.y ));
+	concentric = min(concentric, smoothstep(0.3, 1.0, angleProp) * 0.7 + 0.3 );
+	concentric = saturate(concentric);
+	concentric = min(concentric, p.y+2);
+
+	float sphere = r - Sphere_Radius * ( angleProp * 0.5 + 0.5);
+
+	float2 gp = voxelCenterWS.xz;
+	gp = gp / 2.0;
+	gp = frac(gp) * 2 - 1;
+	float grid = max(gp.x, gp.y);
+	grid = smoothstep(0.5, 1, grid);
+	grid = min(grid, smoothstep(0.7, 0.6, p.y));
+	grid = min(grid, p.y + 2);
+	grid = min(grid, -sphere);
+	grid = saturate(grid);
+
+
+	float clearInnerSphere = r - In_Sphere_Radius;
+	clearInnerSphere = max(clearInnerSphere / 2, -p.y);
+
+	float atten = max(-p.y, sphere);
+
+	atten = max(atten, l);
+	atten = max(atten, trail);
+
+	atten = max(atten, smoothstep(0.5, 0, angleProp) * 0.9);
+	atten = max(atten, concentric);
+	atten = min(atten, clearInnerSphere);
+
+	atten = saturate(atten);
+
+	float3 color = float3(0, 0, 0);
+	color = lerp(color, Grid_Color, grid);
+	color = lerp(color, Scan_Color, max(concentric, max(l, trail) ));
+
+	// Fog color/attenuation output
+	return float4( color, atten);
+}
+
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBlend.hlsl"

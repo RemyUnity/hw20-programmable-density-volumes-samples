@@ -1,0 +1,60 @@
+#pragma kernel CSMain
+
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBase.hlsl"
+
+float4 DensityInfo(float3 voxelCenterWS)
+{
+	// transform world to "object" space coordinate
+	float3 voxelCenterVolSpace = mul(InvVolumeMatrix, float4(voxelCenterWS, 1)).xyz;
+
+	float3 v = abs(voxelCenterVolSpace);
+	v = saturate(v * 2.0);
+
+	float test = smoothstep( 1.0, 0.5, max(v.x, max(v.y, v.z)) );
+
+	float rotAngle = _Time * 15;
+	float cT = cos(rotAngle);
+	float sT = sin(rotAngle);
+
+	float2x2 rotMatrix = float2x2(cT, -sT, sT, cT);
+
+	float3 p = voxelCenterVolSpace;
+	p *= 10;
+	p.z -= length(p.xy) * 0.1;
+
+	float twistAngle = length(p.xy) * -0.15;
+	cT = cos(twistAngle);
+	sT = sin(twistAngle);
+	float2x2 twistMatrix = float2x2(cT, -sT, sT, cT);
+
+	p.xy = mul(twistMatrix, p.xy);
+
+	float tube1 = length(p.xy) < 5;
+	float tube2 = length(p.xy) > 2;
+
+	p.xy = mul(rotMatrix, p.xy);
+
+	float screw = sin(2 * atan(p.y / p.x) + (p.z * 2) ) > 0.85;
+
+	float alpha = min( screw , tube1 );
+	alpha = min(alpha, tube2);
+
+	float strandsTube = length(p.xy) - 3.5;
+	strandsTube = abs(strandsTube);
+	strandsTube = strandsTube < 1.0;
+
+	float tileZ = p.z * 1;
+	float fracZ = frac(tileZ);
+	float stepZ = fracZ > 0.5;
+	float3 strandsColor = float3( stepZ, 0, 1.0-stepZ) * 2;
+
+	alpha = min(alpha, max( 1.0-strandsTube, abs(frac(tileZ *2)*2-1)<0.1 ));
+
+	float3 c = lerp(float3(1, 1, 1), strandsColor, strandsTube);
+
+
+	// Fog color/attenuation output
+	return float4(c * 5, alpha);
+}
+
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBlend.hlsl"

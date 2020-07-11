@@ -1,0 +1,20 @@
+#pragma kernel CSMain
+
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBase.hlsl"
+
+float4 DensityInfo(float3 voxelCenterWS)
+{
+	// transform world to "object" space coordinate
+	float3 voxelCenterVolSpace = mul(InvVolumeMatrix, float4(voxelCenterWS, 1)).xyz;
+
+	float l = length(voxelCenterVolSpace.xz) * 20;
+
+	float sl = sin( l - _Time * 50 );
+
+	float h = voxelCenterVolSpace.y*20 + sl;
+
+	// Fog color/attenuation output
+	return float4( lerp( float3(0,0,1), float3(1,1,1), 1-saturate(-h) ) , h < 0);
+}
+
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBlend.hlsl"
